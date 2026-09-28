@@ -1,0 +1,55 @@
+# =============================================================================
+# Example Nginx server block for the e-commerce app on a shared Oracle Cloud
+# Always Free VM that ALREADY hosts another project.
+#
+# THIS FILE IS A TEMPLATE. Do not overwrite any existing Nginx config with
+# it. Instead:
+#
+#   1. Copy it to a NEW file:
+#        sudo cp shop.example.com.conf.example /etc/nginx/sites-available/shop.example.com
+#
+#   2. Edit the copy:
+#        - replace "shop.example.com" with your real subdomain
+#        - replace "8081" with whichever internal port you confirmed is
+#          free (see the "Oracle Cloud Deployment" section of the README)
+#
+#   3. Symlink it into sites-enabled (this does NOT touch any existing
+#      symlink for your other project):
+#        sudo ln -s /etc/nginx/sites-available/shop.example.com /etc/nginx/sites-enabled/shop.example.com
+#
+#   4. Test before reloading:
+#        sudo nginx -t
+#
+#   5. Reload (reload, not restart -- this does not drop existing
+#      connections to your other project):
+#        sudo systemctl reload nginx
+#
+# After DNS for the subdomain is pointed at this VM, run certbot to add
+# HTTPS (see the README) -- certbot will edit THIS file only, adding a
+# listen 443 ssl block and an HTTP->HTTPS redirect. It will not touch any
+# other server block.
+# =============================================================================
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name shop.example.com;
+
+    # Only the e-commerce app's own access/error logs -- kept separate
+    # from the existing project's logs.
+    access_log /var/log/nginx/shop.example.com.access.log;
+    error_log  /var/log/nginx/shop.example.com.error.log;
+
+    client_max_body_size 10M;
+
+    location / {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}

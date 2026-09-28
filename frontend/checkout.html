@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — ShopSphere</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="container">
+    <h1>Checkout</h1>
+    <div class="grid" style="grid-template-columns: 2fr 1fr; gap:24px; align-items:start;">
+      <form class="card" style="padding:20px;" id="checkout-form">
+        <div id="alert-box"></div>
+        <div class="field">
+          <label for="address">Shipping Address</label>
+          <textarea id="address" required placeholder="Street, city, state, PIN code"></textarea>
+        </div>
+        <button type="submit" class="btn block" id="place-order-btn">Place Order</button>
+      </form>
+      <div class="card" style="padding:20px;">
+        <h3>Order Summary</h3>
+        <div id="checkout-summary"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/layout.js"></script>
+  <script src="/js/checkout.js"></script>
+</body>
+</html>

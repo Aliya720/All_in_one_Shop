@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopSphere — Shop</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="site-header" id="site-header"></header>
+
+  <main class="container">
+    <div class="filters">
+      <input type="text" id="search-input" placeholder="Search products..." />
+      <select id="category-select">
+        <option value="">All categories</option>
+      </select>
+      <input type="number" id="min-price" placeholder="Min price" min="0" style="width:110px" />
+      <input type="number" id="max-price" placeholder="Max price" min="0" style="width:110px" />
+      <select id="sort-select">
+        <option value="newest">Newest</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="name">Name A-Z</option>
+      </select>
+      <button class="btn secondary" id="clear-filters">Clear</button>
+    </div>
+
+    <div id="alert-box"></div>
+    <div class="grid product-grid" id="product-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/layout.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

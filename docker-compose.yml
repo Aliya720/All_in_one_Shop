@@ -1,0 +1,104 @@
+# =============================================================================
+# E-commerce application stack: PostgreSQL + Go backend + Nginx (frontend +
+# reverse proxy). One command brings up the whole thing.
+#
+# IMPORTANT for shared-server (Oracle Cloud) deployments: APP_PORT below is
+# bound to 127.0.0.1 only -- this stack is NEVER exposed directly to the
+# internet. The host's own, already-running Nginx is what the public
+# internet talks to, and it reverse-proxies to 127.0.0.1:${APP_PORT}. See
+# nginx/shop.example.com.conf.example and the "Oracle Cloud Deployment"
+# section of README.md.
+#
+# All state (Postgres data, uploaded images) lives in named volumes /
+# bind-mounted directories that are namespaced to this project, so they
+# never collide with another project's data on the same host.
+# =============================================================================
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ecommerce_db
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ecommerce}
+      POSTGRES_USER: ${POSTGRES_USER:-ecommerce_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    volumes:
+      - ecommerce_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ecommerce_user} -d ${POSTGRES_DB:-ecommerce}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Not published to the host by default -- only the backend container
+    # needs to reach it, over the internal Docker network. Uncomment the
+    # line below only for local debugging with a DB client.
+    # ports:
+    #   - "127.0.0.1:5433:5432"
+    networks:
+      - ecommerce_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecommerce_backend
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_PORT: 8080
+      DATABASE_URL: postgres://${POSTGRES_USER:-ecommerce_user}:${POSTGRES_PASSWORD:-change_me}@db:5432/${POSTGRES_DB:-ecommerce}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+      JWT_EXPIRY_HOURS: ${JWT_EXPIRY_HOURS:-72}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-5}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD must be set in .env}
+      SEED_ON_START: ${SEED_ON_START:-false}
+    volumes:
+      - ecommerce_uploads:/app/uploads
+    networks:
+      - ecommerce_net
+    # Not published to the host directly -- Nginx (below) is the only way
+    # in, and it reaches this container over the internal Docker network.
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: ecommerce_nginx
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx/nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      # Bind to 127.0.0.1 in production so this container is reachable
+      # ONLY via the host's own Nginx reverse proxy, never directly from
+      # the internet. For local development without a host Nginx in
+      # front, you can change this to "8080:80" to browse directly.
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-8081}:80"
+    networks:
+      - ecommerce_net
+
+networks:
+  ecommerce_net:
+    driver: bridge
+
+volumes:
+  ecommerce_db_data:
+    name: ecommerce_db_data
+  ecommerce_uploads:
+    name: ecommerce_uploads

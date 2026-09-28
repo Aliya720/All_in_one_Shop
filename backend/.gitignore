@@ -1,0 +1,50 @@
+# ---------- Secrets & environment (NEVER commit) ----------
+.env
+.env.*
+!.env.example
+backend/.env
+!backend/.env.example
+*.pem
+*.key
+
+# ---------- User uploads (keep the folder, ignore the files) ----------
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ---------- Database backups & dumps ----------
+backups/
+*.sql.gz
+*.dump
+
+# ---------- Go ----------
+backend/bin/
+*.exe
+*.test
+*.out
+coverage.txt
+coverage.html
+vendor/
+
+# ---------- Logs ----------
+*.log
+logs/
+
+# ---------- Docker ----------
+docker-compose.override.yml
+
+# ---------- Node (only if you add frontend tooling later) ----------
+node_modules/
+
+# ---------- Editors & IDEs ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---------- OS files ----------
+.DS_Store
+Thumbs.db
+
+# ---------- Local setup ---------------
+LOCALSETUP.md
