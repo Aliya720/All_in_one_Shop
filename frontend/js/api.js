@@ -7,7 +7,14 @@
  * before this script loads, e.g.:
  *   <script>window.API_BASE = "https://shop.example.com/api";</script>
  */
-const API_BASE = window.API_BASE || "/api";
+const APP_BASE = new URL(".", window.location.href).pathname.replace(/\/$/, "");
+
+function appUrl(path = "") {
+  if (/^(?:[a-z]+:)?\/\//i.test(path) || path.startsWith("data:")) return path;
+  return `${APP_BASE}/${String(path).replace(/^\/+/, "")}`;
+}
+
+const API_BASE = window.API_BASE || appUrl("api");
 const TOKEN_KEY = "ecommerce_token";
 const USER_KEY = "ecommerce_user";
 
@@ -36,7 +43,7 @@ const Auth = {
   },
   logout() {
     this.clearSession();
-    window.location.href = "/login.html";
+    window.location.href = appUrl("login.html");
   },
 };
 

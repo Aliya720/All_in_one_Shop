@@ -14,8 +14,8 @@ async function loadProduct() {
     container.innerHTML = `
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
         <div class="card" style="padding:16px;">
-          <img src="${p.image_url || "/img/placeholder.svg"}" alt="${escapeHtml(p.name)}"
-               style="width:100%; border-radius:8px;" onerror="this.src='/img/placeholder.svg'" />
+          <img src="${appUrl(p.image_url || "/img/placeholder.svg")}" alt="${escapeHtml(p.name)}"
+            style="width:100%; border-radius:8px;" onerror="this.src='${appUrl("/img/placeholder.svg")}'" />
         </div>
         <div>
           <div class="muted">${escapeHtml(p.category_name || "")}</div>
@@ -33,7 +33,8 @@ async function loadProduct() {
 
     qs("#add-to-cart-btn")?.addEventListener("click", async () => {
       if (!Auth.isLoggedIn()) {
-        window.location.href = "/login.html?next=/product.html?slug=" + encodeURIComponent(slug);
+        const next = appUrl("product.html?slug=" + encodeURIComponent(slug));
+        window.location.href = appUrl("login.html?next=" + encodeURIComponent(next));
         return;
       }
       const quantity = parseInt(qs("#qty-input").value, 10) || 1;

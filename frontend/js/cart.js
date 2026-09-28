@@ -2,7 +2,7 @@ async function loadCart() {
   const alertBox = qs("#alert-box");
 
   if (!Auth.isLoggedIn()) {
-    window.location.href = "/login.html?next=/cart.html";
+    window.location.href = appUrl("login.html?next=" + encodeURIComponent(appUrl("cart.html")));
     return;
   }
 
@@ -19,7 +19,7 @@ function renderCart(cart) {
   const checkoutBtn = qs("#checkout-btn");
 
   if (!cart.items || cart.items.length === 0) {
-    container.innerHTML = `<div class="empty-state">Your cart is empty. <a href="/index.html">Browse products</a></div>`;
+    container.innerHTML = `<div class="empty-state">Your cart is empty. <a href="${appUrl("index.html")}">Browse products</a></div>`;
     qs("#summary-count").textContent = "0";
     qs("#summary-total").textContent = formatPrice(0);
     checkoutBtn.classList.add("btn-disabled");
@@ -35,9 +35,9 @@ function renderCart(cart) {
     .map(
       (item) => `
       <div class="cart-row" data-product-id="${item.product_id}">
-        <img src="${item.image_url || "/img/placeholder.svg"}" alt="${escapeHtml(item.name)}" onerror="this.src='/img/placeholder.svg'" />
+        <img src="${appUrl(item.image_url || "/img/placeholder.svg")}" alt="${escapeHtml(item.name)}" onerror="this.src='${appUrl("/img/placeholder.svg")}'" />
         <div class="grow">
-          <div><a href="/product.html?slug=${encodeURIComponent(item.slug)}">${escapeHtml(item.name)}</a></div>
+          <div><a href="${appUrl("product.html?slug=" + encodeURIComponent(item.slug))}">${escapeHtml(item.name)}</a></div>
           <div class="muted">${formatPrice(item.price)} each</div>
         </div>
         <div class="qty-control">

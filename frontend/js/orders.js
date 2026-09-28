@@ -1,6 +1,6 @@
 async function loadOrders() {
   if (!Auth.isLoggedIn()) {
-    window.location.href = "/login.html?next=/orders.html";
+    window.location.href = appUrl("login.html?next=" + encodeURIComponent(appUrl("orders.html")));
     return;
   }
 
@@ -17,7 +17,7 @@ async function loadOrders() {
     const orders = result.items || [];
 
     if (orders.length === 0) {
-      container.innerHTML = `<div class="empty-state">You haven't placed any orders yet. <a href="/index.html">Start shopping</a></div>`;
+      container.innerHTML = `<div class="empty-state">You haven't placed any orders yet. <a href="${appUrl("index.html")}">Start shopping</a></div>`;
       return;
     }
 

@@ -1,6 +1,6 @@
 async function loadSummary() {
   if (!Auth.isLoggedIn()) {
-    window.location.href = "/login.html?next=/checkout.html";
+    window.location.href = appUrl("login.html?next=" + encodeURIComponent(appUrl("checkout.html")));
     return;
   }
 
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const order = await api("/orders/checkout", { method: "POST", body: { shipping_address: address } });
-      window.location.href = "/orders.html?placed=" + order.id;
+      window.location.href = appUrl("orders.html?placed=" + order.id);
     } catch (err) {
       showAlert(alertBox, err.message);
       btn.disabled = false;

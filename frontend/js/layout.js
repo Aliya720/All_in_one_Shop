@@ -14,16 +14,16 @@ function renderLayout() {
 
     header.innerHTML = `
       <div class="header-inner">
-        <a class="brand" href="/index.html">ShopSphere</a>
+        <a class="brand" href="${appUrl("index.html")}">ShopSphere</a>
         <nav class="main-nav">
-          <a href="/index.html">Products</a>
-          <a href="/cart.html">Cart</a>
-          ${loggedIn ? '<a href="/orders.html">Orders</a>' : ""}
-          ${isAdmin ? '<a href="/admin.html">Admin</a>' : ""}
+          <a href="${appUrl("index.html")}">Products</a>
+          <a href="${appUrl("cart.html")}">Cart</a>
+          ${loggedIn ? `<a href="${appUrl("orders.html")}">Orders</a>` : ""}
+          ${isAdmin ? `<a href="${appUrl("admin.html")}">Admin</a>` : ""}
           ${
             loggedIn
               ? `<span class="muted">Hi, ${escapeHtml(user.name)}</span><a href="#" id="logout-link">Logout</a>`
-              : '<a href="/login.html">Login</a><a href="/register.html">Register</a>'
+              : `<a href="${appUrl("login.html")}">Login</a><a href="${appUrl("register.html")}">Register</a>`
           }
         </nav>
       </div>

@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const result = await api("/auth/login", { method: "POST", body: { email, password } });
         Auth.setSession(result.token, result.user);
-        const next = getQueryParam("next") || "/index.html";
+        const next = getQueryParam("next") || appUrl("index.html");
         window.location.href = next;
       } catch (err) {
         showAlert(alertBox, err.message);
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const result = await api("/auth/register", { method: "POST", body: { name, email, password } });
         Auth.setSession(result.token, result.user);
-        window.location.href = "/index.html";
+        window.location.href = appUrl("index.html");
       } catch (err) {
         showAlert(alertBox, err.message);
       }

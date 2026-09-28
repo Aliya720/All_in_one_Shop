@@ -48,8 +48,8 @@ function renderProducts(result) {
   grid.innerHTML = result.items
     .map(
       (p) => `
-      <a class="card product-card" href="/product.html?slug=${encodeURIComponent(p.slug)}">
-        <img class="thumb" src="${p.image_url || "/img/placeholder.svg"}" alt="${escapeHtml(p.name)}" onerror="this.src='/img/placeholder.svg'" />
+      <a class="card product-card" href="${appUrl("product.html?slug=" + encodeURIComponent(p.slug))}">
+        <img class="thumb" src="${appUrl(p.image_url || "/img/placeholder.svg")}" alt="${escapeHtml(p.name)}" onerror="this.src='${appUrl("/img/placeholder.svg")}'" />
         <h3>${escapeHtml(p.name)}</h3>
         <div class="muted">${escapeHtml(p.category_name || "")}</div>
         <div class="price">${formatPrice(p.price)}</div>

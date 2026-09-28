@@ -2,7 +2,7 @@ let allCategories = [];
 
 function guardAdmin() {
   if (!Auth.isLoggedIn()) {
-    window.location.href = "/login.html?next=/admin.html";
+    window.location.href = appUrl("login.html?next=" + encodeURIComponent(appUrl("admin.html")));
     return false;
   }
   if (!Auth.isAdmin()) {
@@ -109,7 +109,7 @@ async function loadProductsAdmin() {
       .map(
         (p) => `
       <tr>
-        <td><img src="${p.image_url || "/img/placeholder.svg"}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.src='/img/placeholder.svg'"/></td>
+        <td><img src="${appUrl(p.image_url || "/img/placeholder.svg")}" style="width:40px;height:40px;object-fit:cover;border-radius:4px;" onerror="this.src='${appUrl("/img/placeholder.svg")}'"/></td>
         <td>${escapeHtml(p.name)}</td>
         <td class="muted">${escapeHtml(p.category_name || "-")}</td>
         <td>${formatPrice(p.price)}</td>
