@@ -6,3 +6,6 @@ backups/
 *.log
 bin/
 .DS_Store
+
+# ---------- Local setup ---------------
+LOCALSETUP.md
